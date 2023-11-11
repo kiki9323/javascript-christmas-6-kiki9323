@@ -19,7 +19,6 @@ class EventController {
 
     // 2. 사용자의 방문 날짜 입력
     const visitDate = await inputWithRetry(() => this.#view.readVisitDate());
-
     // 3. 사용자의 주문 메뉴와 개수 입력
     // 3.1 중복되는 경우 재입력
     const orderedMenuAndCount = await inputWithRetry(async () => {
@@ -27,12 +26,12 @@ class EventController {
       return this.#orderManager.createOrderData(validatedMenu);
     });
 
-    // 3.2 20개 넘어가면 다시 재입력
-    await inputWithRetry(async () => {
-      await inputWithRetry(() => this.#view.readOrderMenu());
-      return this.#orderManager.validateTotalQuantity(orderedMenuAndCount);
-    });
-    // await inputWithRetry(async () => this.#orderManager.validateTotalQuantity(orderedMenuAndCount));
+    // 3.2 TODO: 20개 넘어가면 다시 재입력 로직 수정필요..
+    // await inputWithRetry(async () => {
+    //   await inputWithRetry(() => this.#view.readOrderMenu());
+    //   return this.#orderManager.validateTotalQuantity(orderedMenuAndCount);
+    // });
+    this.#orderManager.validateTotalQuantity(orderedMenuAndCount);
 
     // <할인 전 총주문 금액>
     const totalPrizeBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedMenuAndCount);
