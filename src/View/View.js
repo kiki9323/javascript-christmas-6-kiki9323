@@ -30,32 +30,32 @@ class View {
     this.#outputView.print(MESSAGE.eventInfo.preview);
   }
 
-  printResultHeader() {
+  printOrderHeader() {
     this.#outputView.print(MESSAGE.header.orderMenu);
   }
 
-  printBeforeDiscountTotalAmount() {
-    this.#outputView.print(MESSAGE.header.beforeDiscountTotalAmount);
+  printTotalAmountBeforeDiscount() {
+    this.#outputView.print(MESSAGE.header.totalAmountBeforeDiscount);
   }
 
-  printPreviewMenu() {
-    this.#outputView.print(MESSAGE.header.previewMenu);
+  printGiftMenu() {
+    this.#outputView.print(MESSAGE.header.giftMenu);
   }
 
-  printBenefits() {
-    this.#outputView.print(MESSAGE.header.benefits);
+  printDiscountBenefits() {
+    this.#outputView.print(MESSAGE.header.discountBenefits);
   }
 
-  printTotalBenefitsAmount() {
-    this.#outputView.print(MESSAGE.header.totalBenefitsAmount);
+  printTotalDiscountAmount() {
+    this.#outputView.print(MESSAGE.header.totalDiscountAmount);
   }
 
-  printDiscountedPaymentAmount() {
-    this.#outputView.print(MESSAGE.header.discountedPaymentAmount);
+  printFinalPaymentAmountAfterDiscount() {
+    this.#outputView.print(MESSAGE.header.finalPaymentAmount);
   }
 
-  printDecemberEventBadge() {
-    this.#outputView.print(MESSAGE.header.decemberEventBadge);
+  printEventBadge() {
+    this.#outputView.print(MESSAGE.header.eventBadge);
   }
 }
 

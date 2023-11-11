@@ -1,5 +1,4 @@
 import { Console } from '@woowacourse/mission-utils';
-import Validator from '../Lib/Validator.js';
 
 const InputView = {
   async readLineAsync(message) {
