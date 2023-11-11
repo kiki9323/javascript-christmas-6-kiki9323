@@ -22,15 +22,15 @@ export const inputWithRetry = async (inputMethod) => {
 
 export const formatCommas = (prize) => prize.totalLocaleString();
 
-// orders 결과 받으면 아래와 같이 카테고리 별로 개수 구함
-export const countMenuCategories = (orders) => {
-  const categoryCounts = {};
-  for (const order of orders) {
-    if (categoryCounts[order.category]) categoryCounts[order.category] += 1;
-    else categoryCounts[order.category] = 1;
-  }
-  return categoryCounts;
-};
+// // orders 결과 받으면 아래와 같이 카테고리 별로 개수 구함
+// export const countMenuCategories = (orders) => {
+//   const categoryCounts = {};
+//   for (const order of orders) {
+//     if (categoryCounts[order.category]) categoryCounts[order.category] += 1;
+//     else categoryCounts[order.category] = 1;
+//   }
+//   return categoryCounts;
+// };
 
 // 혜택 내역 message
 export const printDiscountMessage = (applied, totalPrizeBeforeDiscount) => {
