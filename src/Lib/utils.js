@@ -11,45 +11,34 @@ export const deepFreeze = (object) => {
 };
 
 export const inputWithRetry = async (inputMethod) => {
-  while (true) {
-    try {
-      return await inputMethod();
-    } catch (error) {
-      OutputView.printError(error);
-    }
+  try {
+    return await inputMethod();
+  } catch (error) {
+    OutputView.printError(error);
+    return await inputWithRetry(inputMethod);
   }
 };
 
 export const formatCommas = (prize) => prize.totalLocaleString();
 
-// // orders 결과 받으면 아래와 같이 카테고리 별로 개수 구함
-// export const countMenuCategories = (orders) => {
-//   const categoryCounts = {};
-//   for (const order of orders) {
-//     if (categoryCounts[order.category]) categoryCounts[order.category] += 1;
-//     else categoryCounts[order.category] = 1;
-//   }
-//   return categoryCounts;
-// };
-
 // 혜택 내역 message
-export const printDiscountMessage = (applied, totalPrizeBeforeDiscount) => {
-  if (totalPrizeBeforeDiscount < 10000) {
-    return '없음';
-  }
-  for (const [discountType, discountAmount] of Object.entries(applied)) {
+export const printDiscountMessage = (appliedDiscount, totalPrizeBeforeDiscount) => {
+  let message = '';
+  if (totalPrizeBeforeDiscount < 10000) return '없음';
+
+  for (const [discountType, discountAmount] of Object.entries(appliedDiscount)) {
     if (discountAmount !== 0) {
-      return `${discountType}: -${discountAmount.toLocaleString()}원`;
+      message += `${discountType}: -${discountAmount.toLocaleString()}원\n`;
     }
   }
+  return message;
 };
 
 // 배지
-export const getBadgeName = (amount) => {
-  for (const badge of Badges) {
-    if (amount >= Badges.threshold) {
-      return badge.name;
-    }
+export const getBadgeName = (totalBenefit) => {
+  for (let i = Badges.length - 1; i >= 0; i--) {
+    const badge = Badges[i];
+    if (totalBenefit >= badge.threshold) return badge.name;
   }
   return Badges[0].name; // 기본값
 };

@@ -1,4 +1,4 @@
-import { getBadgeName, printDiscountMessage } from '../Lib/utils.js';
+import { printDiscountMessage } from '../Lib/utils.js';
 /**
  * TODO: 필드, 생성자 함수 내부 정리하기
  * 쪼갤 부분 고민해보기
@@ -19,11 +19,13 @@ class DiscountManager {
           dates: { start: 1, end: 25 },
           baseAmount: 1000,
         },
+        // 평일 (일~목), 디저트
         weekday: {
-          dates: [4, 5, 6, 7, 11, 12, 13, 14, 18, 19, 20, 21, 25, 26, 27, 28],
+          dates: [3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 31],
           menuCategory: '디저트',
           discountAmount: 2023,
         },
+        // 주말 (금,토), 메인
         weekend: { dates: [1, 2, 8, 9, 15, 16, 22, 23, 29, 30], menuCategory: '메인', discountAmount: 2023 },
         special: { dates: [3, 10, 17, 24, 25, 31], discountAmount: 1000 },
       };
@@ -42,6 +44,11 @@ class DiscountManager {
 
   // 주문날짜와 메뉴카테고리 받아서 해당하는 할인 받기
   applyDiscount(orderDate, menuCategory) {
+    // 총주문 금액 10000원 이상부터 이벤트 적용
+    if (this.totalAmount < 10000) {
+      return (this.appliedDiscount = this.getDefaultDiscount());
+    }
+
     return (this.appliedDiscount = {
       '크리스마스 디데이 할인': this.getDdayDiscount(orderDate),
       '평일 할인': this.getWeekdayDiscount(orderDate, menuCategory),
@@ -51,7 +58,17 @@ class DiscountManager {
     });
   }
 
-  // 총 할인 금액
+  getDefaultDiscount() {
+    return {
+      '크리스마스 디데이 할인': 0,
+      '평일 할인': 0,
+      '주말 할인': 0,
+      '특별 할인': 0,
+      '증정 이벤트': 0,
+    };
+  }
+
+  // <총혜택 금액> 증정 이벤트는 제외한 할인 대상들만 더한다.
   getTotalDiscount() {
     return Object.values(this.appliedDiscount).reduce((sum, discount) => sum + discount, 0);
   }
@@ -60,8 +77,8 @@ class DiscountManager {
   countMenuCategories(orders) {
     const categoryCounts = {};
     for (const order of orders) {
-      if (categoryCounts[order.category]) categoryCounts[order.category] += 1;
-      else categoryCounts[order.category] = 1;
+      if (!categoryCounts[order.category]) categoryCounts[order.category] = 0;
+      categoryCounts[order.category] += order.quantity;
     }
     return categoryCounts;
   }
@@ -76,22 +93,28 @@ class DiscountManager {
 
   // 평일 할인 계산 로직
   getWeekdayDiscount(orderDate, menuCategory) {
-    const isWeekday = this.isWeekday(orderDate) && 'weekday';
-    if (!isWeekday) return 0;
-    return this.discounts[isWeekday].discountAmount * menuCategory[this.discounts.weekday.menuCategory];
+    const { menuCategory: category, discountAmount: discount } = this.discounts.weekday;
+    const isWeekday = this.isWeekday(orderDate);
+    const menuCount = menuCategory[category];
+
+    if (isWeekday && menuCount) return discount * menuCount;
+    return 0;
   }
 
   // 주말 할인 계산 로직
   getWeekendDiscount(orderDate, menuCategory) {
-    const isWeekend = this.isWeekend(orderDate) && 'weekend';
-    if (!isWeekend) return 0;
-    return this.discounts[isWeekend].discountAmount * menuCategory[this.discounts.weekend.menuCategory];
+    const { menuCategory: category, discountAmount: discount } = this.discounts.weekend;
+    const isWeekend = this.isWeekend(orderDate);
+    const menuCount = menuCategory[category];
+
+    if (isWeekend && menuCount) discount * menuCount;
+    return 0;
   }
 
   // 특별 할인 계산 로직
   getSpecialDiscount(orderDate) {
     if (this.isInSpecialDates(orderDate)) {
-      return this.discounts.special.discountAmount * orderDate;
+      return this.discounts.special.discountAmount;
     }
     return 0;
   }
@@ -115,31 +138,34 @@ class DiscountManager {
 
   // 평일 할인 대상인지
   isWeekday(date) {
-    return this.discounts.weekday.dates.includes(date);
+    return this.discounts.weekday.dates.includes(Number(date));
   }
 
   // 주말 할인 대상인지
   isWeekend(date) {
-    return this.discounts.weekend.dates.includes(date);
+    return this.discounts.weekend.dates.includes(Number(date));
   }
 
   // 스페셜 할인 대상인지
   isInSpecialDates(date) {
-    return this.discounts.special.dates.includes(date);
+    return this.discounts.special.dates.includes(Number(date));
   }
 
-  printDiscountResult(totalBenefit, appliedDiscount, totalPrizeBeforeDiscount) {
+  printDiscountResult(totalBenefit, appliedDiscount, totalPrizeBeforeDiscount, isGiftEligible) {
+    console.log('appliedDiscount', appliedDiscount);
+    // Discount <혜택 내역> : 할인들과 증정 이벤트 보여줌
     this.#view.printDiscountBenefits();
     this.#view.print(printDiscountMessage(appliedDiscount, totalPrizeBeforeDiscount));
 
+    // Discount <총혜택 금액> : 할인들과 증정 이벤트가격 모두 더해서 보여줌
     this.#view.printTotalDiscountAmount();
     this.#view.print(totalBenefit ? `-${totalBenefit.toLocaleString()}원` : '0원');
 
+    // Discount <할인 후 예상 결제 금액> : 할인 가격들만 빼서 보여줌 (증정 이벤트 제외)
     this.#view.printFinalPaymentAmountAfterDiscount();
-    this.#view.print(`${(totalPrizeBeforeDiscount - totalBenefit).toLocaleString()}원`);
-
-    this.#view.printEventBadge();
-    this.#view.print(getBadgeName(totalBenefit));
+    const gift = isGiftEligible ? isGiftEligible : 0;
+    const finalPayment = totalPrizeBeforeDiscount - totalBenefit + gift;
+    this.#view.print(`${finalPayment.toLocaleString()}원`);
   }
 }
 
