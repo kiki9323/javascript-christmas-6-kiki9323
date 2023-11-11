@@ -1,81 +1,47 @@
-import { countMenuCategories, getBadgeName, inputWithRetry, printDiscountMessage } from './Lib/utils.js';
-
-import AppError from './errors/error.js';
-import DiscountManager from './Lib/DiscountManager.js';
+import DiscountManager from './Service/DiscountManager.js';
+import OrderManager from './Service/OrderManager.js';
 import View from './View/View.js';
+import { inputWithRetry } from './Lib/utils.js';
 
 class App {
   #view;
+
+  #orderManager;
 
   #discountManager;
 
   constructor() {
     this.#view = new View();
-    this.#discountManager = new DiscountManager();
+    this.#orderManager = new OrderManager(this.#view);
+    this.#discountManager = new DiscountManager(this.#view);
   }
 
   async run() {
-    // 1. 안녕~
+    // 1. 크리스마스 이벤트 시작을 알려주는 인사 메시지
     this.#view.printEventTitle();
 
-    // 2. 방문 날짜 입력
+    // 2. 사용자의 방문 날짜 입력 + 3. 사용자의 주문 메뉴와 개수 입력
     const visitDate = await inputWithRetry(() => this.#view.readVisitDate());
-
-    // 3. 주문 메뉴와 개수 입력
     const orderedMenuAndCount = await inputWithRetry(() => this.#view.readOrderMenu());
 
-    // 총 주문 수량 체크
-    this.validateTotalQuantity(orderedMenuAndCount);
+    // 총 주문 수량 체크 -> 마지막 할인율 계산 시 사용
+    this.#orderManager.validateTotalQuantity(orderedMenuAndCount);
+    // 총주문 금액 계산 -> DiscountManager
+    const totalPrizeBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedMenuAndCount);
 
-    // 총주문 금액 계산
-    const totalPrizeBeforeDiscount = this.calculateTotalPrizeBeforeDiscount(orderedMenuAndCount);
-
-    // discountManager에 총주문 금액 세팅
+    // DiscountManager에 총주문 금액 세팅
     this.#discountManager.addOrder(totalPrizeBeforeDiscount);
 
-    const appliedDiscount = this.#discountManager.applyDiscount(visitDate, countMenuCategories(orderedMenuAndCount));
+    const appliedDiscount = this.#discountManager.applyDiscount(
+      visitDate,
+      this.#discountManager.countMenuCategories(orderedMenuAndCount),
+    );
 
     const totalBenefit = this.#discountManager.getTotalDiscount();
     const isGiftEligible = this.#discountManager.applyPromotion() || 0; // 샴페인
 
-    this.printResult(orderedMenuAndCount, totalPrizeBeforeDiscount, appliedDiscount, totalBenefit, isGiftEligible);
-  }
-
-  validateTotalQuantity(orderedMenuAndCount) {
-    const totalQuantity = orderedMenuAndCount.reduce((sum, order) => sum + order.quantity, 0);
-    if (totalQuantity > 20) {
-      throw new AppError('주문은 총 20개까지 가능합니다.');
-    }
-  }
-
-  calculateTotalPrizeBeforeDiscount(orderedMenuAndCount) {
-    return orderedMenuAndCount.reduce((sum, order) => sum + order.totalPrize, 0);
-  }
-
-  printResult(orderedMenuAndCount, totalPrizeBeforeDiscount, appliedDiscount, totalBenefit, isGiftEligible) {
-    this.#view.printResultHeader();
-
-    orderedMenuAndCount.forEach((order) => {
-      this.#view.print(`${order.name} ${order.quantity}개`);
-    });
-
-    this.#view.printBeforeDiscountTotalAmount();
-    this.#view.print(`${totalPrizeBeforeDiscount.toLocaleString()}원`);
-
-    this.#view.printPreviewMenu();
-    this.#view.print(isGiftEligible ? `${'샴페인 1개'}` : '없음');
-
-    this.#view.printBenefits();
-    this.#view.print(printDiscountMessage(appliedDiscount, totalPrizeBeforeDiscount));
-
-    this.#view.printTotalBenefitsAmount();
-    this.#view.print(totalBenefit ? `-${totalBenefit.toLocaleString()}원` : '0원');
-
-    this.#view.printDiscountedPaymentAmount();
-    this.#view.print(`${(totalPrizeBeforeDiscount - totalBenefit).toLocaleString()}원`);
-
-    this.#view.printDecemberEventBadge();
-    this.#view.print(getBadgeName(totalBenefit));
+    this.#orderManager.printOrderResult(orderedMenuAndCount, totalPrizeBeforeDiscount, isGiftEligible);
+    this.#discountManager.printDiscountResult(appliedDiscount, totalPrizeBeforeDiscount, totalBenefit);
   }
 }
 
