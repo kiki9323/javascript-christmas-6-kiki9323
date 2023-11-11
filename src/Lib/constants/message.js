@@ -10,12 +10,12 @@ const eventInfo = {
 
 const header = {
   orderMenu: '\n<주문 메뉴>',
-  beforeDiscountTotalAmount: '\n<할인 전 총주문 금액>',
-  previewMenu: '\n<증정 메뉴>',
-  benefits: '\n<혜택 내역>',
-  totalBenefitsAmount: '\n<총혜택 금액>',
-  discountedPaymentAmount: '\n<할인 후 예상 결제 금액>',
-  decemberEventBadge: '\n<12월 이벤트 배지>',
+  totalAmountBeforeDiscount: '\n<할인 전 총주문 금액>',
+  giftMenu: '\n<증정 메뉴>',
+  discountBenefits: '\n<혜택 내역>',
+  totalDiscountAmount: '\n<총혜택 금액>',
+  finalPaymentAmount: '\n<할인 후 예상 결제 금액>',
+  eventBadge: '\n<12월 이벤트 배지>',
 };
 
 const MESSAGE = Object.freeze({ read, eventInfo, header });
