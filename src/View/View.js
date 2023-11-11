@@ -1,7 +1,6 @@
 import InputView from './InputView.js';
 import MESSAGE from '../Lib/constants/message.js';
 import OutputView from './OutputView.js';
-import Validator from '../Lib/Validator.js';
 
 class View {
   #inputView = InputView;
@@ -10,12 +9,12 @@ class View {
 
   async readVisitDate() {
     const input = await this.#inputView.readVisitDate(MESSAGE.read.visitDate);
-    return Validator.validatedInputDate(input);
+    return input;
   }
 
   async readOrderMenu() {
     const input = await this.#inputView.readMenuAndCount(MESSAGE.read.orderMenuAndCount);
-    return Validator.validatedOrderMenuAcount(input);
+    return input;
   }
 
   print(message) {
