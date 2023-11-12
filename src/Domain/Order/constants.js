@@ -1,4 +1,6 @@
-const MenuPrices = Object.freeze({
+import { deepFreeze } from '../../Lib/utils.js';
+
+export const MenuPrices = deepFreeze({
   애피타이저: {
     양송이수프: 6000,
     타파스: 5500,
@@ -20,5 +22,3 @@ const MenuPrices = Object.freeze({
     샴페인: 25000,
   },
 });
-
-export default MenuPrices;
