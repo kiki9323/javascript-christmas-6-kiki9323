@@ -10,39 +10,43 @@ class OrderManager {
   }
 
   createOrderData(items) {
-    // TODO: 입력받은(유효성 검증이 끝난 데이터 받아서 order data 만들기)
+    if (this.validateCheckOnlyDrinks(items)) {
+      throw new AppError(ERROR.inputView.order.invalidOnlyDrinks);
+    }
+
     const orders = [];
-    let hasOnlyDrinks = true;
 
     for (let item of items) {
       const [menu, quantity] = item.split('-');
       const category = this.validateCategoryAndMenu(menu);
+      const orderData = this.createSingleOrderData(menu, quantity, category);
 
-      // order data 생성
-      const onePrice = MenuPrices[category][menu];
-      const totalPrice = onePrice * parseInt(quantity);
-
-      const orderData = {
-        category,
-        name: menu,
-        quantity: parseInt(quantity),
-        onePrice,
-        totalPrice,
-      };
-
-      // 주문 정보를 배열에 추가
       orders.push(orderData);
-
-      // 음료 외의 카테고리가 존재할 경우 플래그를 false로 설정
-      if (category !== '음료') hasOnlyDrinks = false;
-    }
-
-    // 음료만 주문한 경우 에러 발생
-    if (hasOnlyDrinks && orders.length > 0) {
-      throw new AppError(ERROR.inputView.order.invalidOnlyDrinks);
     }
 
     return orders;
+  }
+
+  createSingleOrderData(menu, quantity, category) {
+    const onePrice = MenuPrices[category][menu];
+    const totalPrice = onePrice * parseInt(quantity);
+    return {
+      category,
+      name: menu,
+      quantity: parseInt(quantity),
+      onePrice,
+      totalPrice,
+    };
+  }
+
+  validateCheckOnlyDrinks(items) {
+    for (let item of items) {
+      const [menu] = item.split('-');
+      const category = this.validateCategoryAndMenu(menu);
+
+      if (category !== '음료') return false;
+    }
+    return true;
   }
 
   validateCategoryAndMenu(menu) {
