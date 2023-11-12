@@ -55,13 +55,6 @@ class OrderManager {
     throw new AppError(ERROR.inputView.order.invalid);
   }
 
-  validateTotalQuantity(orderedMenuAndCount) {
-    const totalQuantity = orderedMenuAndCount.reduce((sum, order) => sum + order.quantity, 0);
-    if (totalQuantity > 20) {
-      throw new AppError('주문은 총 20개까지 가능합니다.');
-    }
-  }
-
   calculateTotalOrderAmount(orderedMenuAndCount) {
     return orderedMenuAndCount.reduce((sum, order) => sum + order.totalPrice, 0);
   }

@@ -14,7 +14,7 @@ const InputView = {
 
   async readMenuAndCount(message) {
     const input = await this.readLineAsync(message);
-    return Validator.validatedOrderMenuCount(input);
+    return Validator.validatedOrder(input);
   },
 };
 
