@@ -1,5 +1,6 @@
 import InputView from './InputView.js';
 import MESSAGE from '../Lib/constants/message.js';
+import MessageFormat from '../Lib/MessageFormat.js';
 import OutputView from './OutputView.js';
 
 class View {
@@ -25,8 +26,8 @@ class View {
     this.#outputView.print(MESSAGE.eventInfo.title);
   }
 
-  printEventInfo() {
-    this.#outputView.print(MESSAGE.eventInfo.preview);
+  printEventInfo(visitDate) {
+    this.#outputView.print(MessageFormat.preview(visitDate));
   }
 
   printOrderHeader() {

@@ -20,6 +20,7 @@ class EventController {
     const visitDate = await this.getUserVisitDate();
     const orderedMenuAndCount = await this.getUserOrder();
     const appliedDiscount = this.calculateAndApplyDiscount(visitDate, orderedMenuAndCount);
+    this.#view.printEventInfo(visitDate);
     this.printResults(orderedMenuAndCount, appliedDiscount);
 
     this.#view.printEventBadge();
