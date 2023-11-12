@@ -31,3 +31,10 @@ export const promotion = Object.freeze({
   gift: '샴페인 1병',
   discountAmount: 25000,
 });
+
+export const badges = Object.freeze([
+  { threshold: 0, name: '없음' },
+  { threshold: 5000, name: '별' },
+  { threshold: 10000, name: '트리' },
+  { threshold: 20000, name: '산타' },
+]);

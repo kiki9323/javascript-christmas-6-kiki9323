@@ -1,4 +1,4 @@
-import { printDiscountMessage } from '../../Lib/utils.js';
+import { printDiscountMessage } from './utils.js';
 
 /**
  * 할인 결과를 출력하는 역할을 한다.

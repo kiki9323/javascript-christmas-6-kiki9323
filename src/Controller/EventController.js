@@ -1,4 +1,5 @@
-import { getBadgeName, inputWithRetry } from '../Lib/utils.js';
+import { getBadgeName } from '../Domain/Discount/utils.js';
+import { inputWithRetry } from '../Lib/utils.js';
 
 class EventController {
   #view;
