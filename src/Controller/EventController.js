@@ -14,37 +14,49 @@ class EventController {
   }
 
   async runEvent() {
-    // 1. 크리스마스 이벤트 시작 메시지
     this.#view.printEventTitle();
 
-    // 2. 사용자의 방문 날짜 입력
-    const visitDate = await inputWithRetry(() => this.#view.readVisitDate());
-    // 3. 사용자의 주문 메뉴와 개수 입력
-    const orderedMenuAndCount = await inputWithRetry(async () => {
+    const visitDate = await this.getUserVisitDate();
+    const orderedMenuAndCount = await this.getUserOrder();
+    const appliedDiscount = this.calculateAndApplyDiscount(visitDate, orderedMenuAndCount);
+    this.printResults(orderedMenuAndCount, appliedDiscount);
+
+    this.#view.printEventBadge();
+    this.#view.print(this.getBadgeName());
+  }
+
+  async getUserVisitDate() {
+    return await inputWithRetry(() => this.#view.readVisitDate());
+  }
+
+  async getUserOrder() {
+    return await inputWithRetry(async () => {
       const validatedMenu = await inputWithRetry(() => this.#view.readOrderMenu());
       return this.#orderManager.createOrderData(validatedMenu);
     });
+  }
 
-    // <할인 전 총주문 금액>
+  calculateAndApplyDiscount(visitDate, orderedMenuAndCount) {
     const totalPrizeBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedMenuAndCount);
-
-    // DiscountManager에 총주문 금액 세팅
     this.#discountManager.addOrder(totalPrizeBeforeDiscount);
-
-    const appliedDiscount = this.#discountManager.applyDiscount(
+    return this.#discountManager.applyDiscount(
       visitDate,
       this.#discountManager.countMenuCategories(orderedMenuAndCount),
     );
+  }
 
+  printResults(orderedMenuAndCount, appliedDiscount) {
     const totalBenefit = this.#discountManager.getTotalDiscount();
-    const isGiftEligible = this.#discountManager.applyPromotion() || 0; // 샴페인
+    const isGiftEligible = this.#discountManager.applyPromotion();
+    const totalPrizeBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedMenuAndCount);
 
     this.#orderManager.printOrderResult(orderedMenuAndCount, totalPrizeBeforeDiscount, isGiftEligible);
     this.#discountManager.printDiscountResult(totalBenefit, appliedDiscount, totalPrizeBeforeDiscount, isGiftEligible);
+  }
 
-    // <12월 이벤트 배지>
-    this.#view.printEventBadge();
-    this.#view.print(getBadgeName(totalBenefit));
+  getBadgeName() {
+    const totalBenefit = this.#discountManager.getTotalDiscount();
+    return getBadgeName(totalBenefit);
   }
 }
 export default EventController;
