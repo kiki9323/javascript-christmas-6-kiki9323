@@ -145,3 +145,24 @@
 <12월 이벤트 배지>
 산타 혹은 없음
 ```
+
+---
+
+`Domain/Discount`
+
+DiscountManager.js를 도메인 단위로 분리하는 작업.
+
+아래 세가지 형태로 나눈다.
+
+1. Discount.js
+
+- 할인과 관련된 데이터와 로직을 관리한다.
+
+2. DiscountManager.js
+
+- Discount 도메인 객체를 활용하여 비즈니스 로직을 처리한다.
+
+3. DiscountView.js
+
+- 결과를 출력한다.
+
