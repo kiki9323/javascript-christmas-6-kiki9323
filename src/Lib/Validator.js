@@ -1,6 +1,8 @@
 import AppError from '../errors/error.js';
-import Date from './constants/date.js';
-import ERROR from './constants/error.js';
+import COMMON from '../constants/common.js';
+import DATE from '../constants/date.js';
+import ERROR from '../constants/error.js';
+import REGEX from '../constants/regex.js';
 
 const Validator = {
   /**
@@ -14,12 +16,11 @@ const Validator = {
   },
 
   isValidDate(num) {
-    return Number(num) && num >= Date.period.start && num <= Date.period.end;
+    return Number(num) && num >= DATE.period.start && num <= DATE.period.end;
   },
 
   isOnlyNumber(num) {
-    const numberRegex = /^\d+$/;
-    return numberRegex.test(num);
+    return REGEX.number.test(num);
   },
 
   /**
@@ -33,7 +34,7 @@ const Validator = {
   },
 
   parseOrder(orderString) {
-    return orderString.split(',');
+    return orderString.split(COMMON.string.comma);
   },
 
   checkOrderItemFormatAndQuantity(orderItems) {
@@ -48,33 +49,32 @@ const Validator = {
 
   checkTotalOrderQuantity(orderItems) {
     const totalQuantity = orderItems.reduce((acc, item) => acc + this.getQuantityFromItem(item), 0);
-    if (totalQuantity > 20) {
-      throw new AppError('총 주문 갯수는 20개를 초과할 수 없습니다.');
+    if (totalQuantity > COMMON.number.maxOrderCount) {
+      throw new AppError(ERROR.inputView.order.maxOrderCount);
     }
   },
 
   validateItemFormat(item) {
-    const itemFormatRegex = /^([a-zA-Z가-힣]+-\d+(,|$))+$/;
-    if (!itemFormatRegex.test(item)) {
-      throw new AppError('유효하지 않은 주문입니다. 다시 입력해 주세요.');
+    if (!REGEX.itemFormat.test(item)) {
+      throw new AppError(ERROR.inputView.order.invalid);
     }
   },
 
   getQuantityFromItem(item) {
-    const [_, quantity] = item.split('-');
+    const [_, quantity] = item.split(COMMON.string.dash);
     return parseInt(quantity);
   },
 
   validateNonZeroQuantity(quantity) {
     if (quantity === '0' || quantity === 0) {
-      throw new AppError('1개 이상 부터 주문 가능합니다.');
+      throw new AppError(ERROR.inputView.order.minOrderCount);
     }
   },
 
   checkForDuplicateItems(item, orderedMenuItems) {
-    const [menu, _] = item.split('-');
+    const [menu, _] = item.split(COMMON.string.dash);
     if (orderedMenuItems.includes(menu)) {
-      throw new AppError('중복된 메뉴가 있습니다.');
+      throw new AppError(ERROR.inputView.order.duplicatedMenu);
     }
     orderedMenuItems.push(menu);
   },
