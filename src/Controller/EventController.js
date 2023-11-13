@@ -1,7 +1,7 @@
+import DiscountMsgFormat from '../Domain/Discount/DiscountMsgFormat.js';
 import Order from '../Domain/Order/Order.js';
 import OrderManager from '../Domain/Order/OrderManager.js';
 import OrderView from '../Domain/Order/OrderView.js';
-import { getBadgeName } from '../Domain/Discount/utils.js';
 import { inputWithRetry } from '../Lib/utils.js';
 
 class EventController {
@@ -24,9 +24,7 @@ class EventController {
 
     const visitDate = await this.#getVisitDate();
     const { orderedItems, categoryCount } = await this.#getOrderItems();
-    console.log(orderedItems, categoryCount);
     const appliedDiscount = this.#applyDiscount(visitDate, orderedItems, categoryCount);
-
     this.#printEventInfo(visitDate);
     this.#printResults(orderedItems, appliedDiscount);
     this.#printBadge();
@@ -68,7 +66,6 @@ class EventController {
     const totalDiscountWithoutGift = this.#discountManager.getTotalDiscountWithoutGift();
     const totalPriceBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedItems);
 
-    console.log(totalDiscountWithoutGift);
     this.#orderView.printOrderResult(orderedItems, totalPriceBeforeDiscount, isGiftEligible);
     this.#discountView.printDiscountResult(
       appliedDiscount,
@@ -80,7 +77,7 @@ class EventController {
 
   #getBadgeName() {
     const totalDiscount = this.#discountManager.getTotalDiscount();
-    return getBadgeName(totalDiscount);
+    return DiscountMsgFormat.getBadgeName(totalDiscount);
   }
 
   #printBadge() {
