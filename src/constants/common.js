@@ -1,21 +1,23 @@
 const unit = Object.freeze({
-  value: 1000,
+  percentage: 100,
+  thousand: 1000,
+  eventMin: 10000,
 });
 
 const number = Object.freeze({
-  orderLimitCount: 20,
-  minEventApplyAmount: 10000,
+  maxOrderCount: 20,
 });
 
 const string = Object.freeze({
   comma: ',',
   dash: '-',
+  default: '없음',
 });
 
-const CONSTANTS = Object.freeze({
+const COMMON = Object.freeze({
   unit,
   number,
   string,
 });
 
-export default CONSTANTS;
+export default COMMON;

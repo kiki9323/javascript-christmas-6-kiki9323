@@ -1,4 +1,4 @@
-const Date = Object.freeze({
+const DATE = Object.freeze({
   period: {
     start: 1,
     christmas: 25,
@@ -6,4 +6,4 @@ const Date = Object.freeze({
   },
 });
 
-export default Date;
+export default DATE;
