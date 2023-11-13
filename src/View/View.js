@@ -1,5 +1,5 @@
 import InputView from './InputView.js';
-import MESSAGE from '../Lib/constants/message.js';
+import MESSAGE from '../constants/message.js';
 import MessageFormat from '../Lib/MessageFormat.js';
 import OutputView from './OutputView.js';
 

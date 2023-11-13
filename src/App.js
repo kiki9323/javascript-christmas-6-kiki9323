@@ -1,5 +1,4 @@
-import { discounts, promotion } from './Domain/Discount/constants.js';
-
+import DISCOUNT from './Domain/Discount/constants.js';
 import Discount from './Domain/Discount/Discount.js';
 import DiscountManager from './Domain/Discount/DiscountManager.js';
 import DiscountView from './Domain/Discount/DiscountView.js';
@@ -11,7 +10,7 @@ class App {
 
   constructor() {
     const view = new View();
-    const discount = new Discount(discounts, promotion);
+    const discount = new Discount(DISCOUNT.condition, DISCOUNT.promotion);
     const discountManager = new DiscountManager(discount);
     const discountView = new DiscountView(view);
 
