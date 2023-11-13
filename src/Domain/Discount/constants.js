@@ -38,3 +38,13 @@ export const badges = Object.freeze([
   { threshold: 10000, name: '트리' },
   { threshold: 20000, name: '산타' },
 ]);
+
+export const DISCOUNT_TYPES = Object.freeze({
+  D_DAY: '크리스마스 디데이 할인',
+  WEEKDAY: '평일 할인',
+  WEEKEND: '주말 할인',
+  SPECIAL: '특별 할인',
+  GIFT_EVENT: '증정 이벤트',
+});
+
+export const MINIMUM_DISCOUNT_AMOUNT = 10000;
