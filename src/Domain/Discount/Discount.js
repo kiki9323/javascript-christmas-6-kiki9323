@@ -36,8 +36,7 @@ class Discount {
     return totalAmount >= threshold ? discountAmount : 0;
   }
 
-  // 입력한 방문 날짜가 1일과 31일 사이인지
-  // TODO: 숫자만 입력, 문자나 공백 등 걸러내기
+  // 크리스마스 할인 조건 (방문 날짜가 1일과 25일 사이인지)
   isInDateRange(date, { start, end }) {
     return date >= start && date <= end;
   }

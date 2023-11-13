@@ -10,8 +10,15 @@ const condition = deepFreeze({
     menuCategory: '디저트',
     discountAmount: 2023,
   },
-  weekend: { dates: [1, 2, 8, 9, 15, 16, 22, 23, 29, 30], menuCategory: '메인', discountAmount: 2023 },
-  special: { dates: [3, 10, 17, 24, 25, 31], discountAmount: 1000 },
+  weekend: {
+    dates: [1, 2, 8, 9, 15, 16, 22, 23, 29, 30],
+    menuCategory: '메인',
+    discountAmount: 2023,
+  },
+  special: {
+    dates: [3, 10, 17, 24, 25, 31],
+    discountAmount: 1000,
+  },
 });
 
 const types = Object.freeze({
