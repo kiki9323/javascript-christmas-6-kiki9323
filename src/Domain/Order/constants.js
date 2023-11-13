@@ -22,3 +22,7 @@ export const MenuPrices = deepFreeze({
     샴페인: 25000,
   },
 });
+
+export const ORDER = Object.freeze({
+  drinks: '음료',
+});

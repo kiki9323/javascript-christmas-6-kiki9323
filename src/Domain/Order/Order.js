@@ -1,32 +1,26 @@
+import { MenuPrices, ORDER } from './constants.js';
+
+import AppError from '../../errors/error.js';
 import ERROR from '../../Lib/constants/error.js';
-import { MenuPrices } from './constants.js';
 
 class Order {
   #items;
 
   constructor(items) {
-    this.#items = this.createOrderData(items);
+    this.#items = this.processOrderItems(items);
   }
 
-  createOrderData(items) {
-    if (this.validateCheckOnlyDrinks(items)) {
+  processOrderItems(items) {
+    if (this.isOnlyDrinks(items)) {
       throw new AppError(ERROR.inputView.order.invalidOnlyDrinks);
     }
 
-    const orders = [];
-
-    for (let item of items) {
-      const [menu, quantity] = item.split('-');
-      const category = this.validateCategoryAndMenu(menu);
-      const orderData = this.createSingleOrderData(menu, quantity, category);
-
-      orders.push(orderData);
-    }
-
-    return orders;
+    return items.map((item) => this.createSingleOrderData(item));
   }
 
-  createSingleOrderData(menu, quantity, category) {
+  createSingleOrderData(item) {
+    const [menu, quantity] = item.split('-');
+    const category = this.getCategoryOfMenu(menu);
     const onePrice = MenuPrices[category][menu];
     const totalPrice = onePrice * parseInt(quantity);
     return {
@@ -38,17 +32,14 @@ class Order {
     };
   }
 
-  validateCheckOnlyDrinks(items) {
-    for (let item of items) {
+  isOnlyDrinks(items) {
+    return items.every((item) => {
       const [menu] = item.split('-');
-      const category = this.validateCategoryAndMenu(menu);
-
-      if (category !== '음료') return false;
-    }
-    return true;
+      return this.getCategoryOfMenu(menu) === ORDER.drinks;
+    });
   }
 
-  validateCategoryAndMenu(menu) {
+  getCategoryOfMenu(menu) {
     const categories = Object.keys(MenuPrices);
     for (const category of categories) {
       if (MenuPrices[category].hasOwnProperty(menu)) {
@@ -56,6 +47,10 @@ class Order {
       }
     }
     throw new AppError(ERROR.inputView.order.invalid);
+  }
+
+  getItems() {
+    return this.#items;
   }
 }
 
