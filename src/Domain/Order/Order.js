@@ -22,11 +22,12 @@ class Order {
     const [menu, quantity] = item.split(COMMON.string.dash);
     const category = this.getCategoryOfMenu(menu);
     const onePrice = ORDER.MenuPrices[category][menu];
-    const totalPrice = onePrice * parseInt(quantity);
+    const parsedQuantity = parseInt(quantity);
+    const totalPrice = onePrice * parsedQuantity;
     return {
       category,
       name: menu,
-      quantity: parseInt(quantity),
+      quantity: parsedQuantity,
       onePrice,
       totalPrice,
     };
