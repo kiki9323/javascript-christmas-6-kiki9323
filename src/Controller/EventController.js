@@ -1,60 +1,75 @@
+import Order from '../Domain/Order/Order.js';
+import OrderManager from '../Domain/Order/OrderManager.js';
+import OrderView from '../Domain/Order/OrderView.js';
 import { getBadgeName } from '../Domain/Discount/utils.js';
 import { inputWithRetry } from '../Lib/utils.js';
 
 class EventController {
   #view;
   #orderManager;
+  #orderView;
   #discountManager;
   #discountView;
 
-  constructor(view, orderManager, discountManager, discountView) {
+  constructor(view, discountManager, discountView) {
     this.#view = view;
-    this.#orderManager = orderManager;
+    this.#orderManager = new OrderManager();
+    this.#orderView = new OrderView(view);
     this.#discountManager = discountManager;
     this.#discountView = discountView;
   }
 
   async runEvent() {
-    this.#view.printEventTitle();
+    this.#printEventTitle();
 
-    const visitDate = await this.getUserVisitDate();
-    const orderedMenuAndCount = await this.getUserOrder();
-    const appliedDiscount = this.calculateAndApplyDiscount(visitDate, orderedMenuAndCount);
-    this.#view.printEventInfo(visitDate);
-    this.printResults(orderedMenuAndCount, appliedDiscount);
+    const visitDate = await this.#getVisitDate();
+    const { orderedItems, categoryCount } = await this.#getOrderItems();
+    console.log(orderedItems, categoryCount);
+    const appliedDiscount = this.#applyDiscount(visitDate, orderedItems, categoryCount);
 
-    this.#view.printEventBadge();
-    this.#view.print(this.getBadgeName());
+    this.#printEventInfo(visitDate);
+    this.#printResults(orderedItems, appliedDiscount);
+    this.#printBadge();
   }
 
-  async getUserVisitDate() {
+  #printEventTitle() {
+    this.#view.printEventTitle();
+  }
+
+  async #getVisitDate() {
     return await inputWithRetry(() => this.#view.readVisitDate());
   }
 
-  async getUserOrder() {
-    return await inputWithRetry(async () => {
+  async #getOrderItems() {
+    const orderedItems = await inputWithRetry(async () => {
       const validatedMenu = await inputWithRetry(() => this.#view.readOrderMenu());
-      return this.#orderManager.createOrderData(validatedMenu);
+      const order = new Order(validatedMenu);
+      return order.getItems();
     });
+
+    const categoryCount = this.#discountManager.countMenuCategories(orderedItems);
+    return { orderedItems, categoryCount };
   }
 
-  calculateAndApplyDiscount(visitDate, orderedMenuAndCount) {
-    const totalPriceBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedMenuAndCount);
+  #applyDiscount(visitDate, orderedItems, categoryCount) {
+    const totalPriceBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedItems);
     this.#discountManager.setTotalAmount(totalPriceBeforeDiscount);
 
-    return this.#discountManager.applyDiscount(
-      visitDate,
-      this.#discountManager.countMenuCategories(orderedMenuAndCount),
-    );
+    return this.#discountManager.applyDiscount(visitDate, categoryCount);
   }
 
-  printResults(orderedMenuAndCount, appliedDiscount) {
+  #printEventInfo(visitDate) {
+    this.#view.printEventInfo(visitDate);
+  }
+
+  #printResults(orderedItems, appliedDiscount) {
     const totalDiscount = this.#discountManager.getTotalDiscount();
     const isGiftEligible = this.#discountManager.applyPromotion();
     const totalDiscountWithoutGift = this.#discountManager.getTotalDiscountWithoutGift();
-    const totalPriceBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedMenuAndCount);
+    const totalPriceBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedItems);
 
-    this.#orderManager.printOrderResult(orderedMenuAndCount, totalPriceBeforeDiscount, isGiftEligible);
+    console.log(totalDiscountWithoutGift);
+    this.#orderView.printOrderResult(orderedItems, totalPriceBeforeDiscount, isGiftEligible);
     this.#discountView.printDiscountResult(
       appliedDiscount,
       totalPriceBeforeDiscount,
@@ -63,9 +78,14 @@ class EventController {
     );
   }
 
-  getBadgeName() {
+  #getBadgeName() {
     const totalDiscount = this.#discountManager.getTotalDiscount();
     return getBadgeName(totalDiscount);
+  }
+
+  #printBadge() {
+    this.#view.printEventBadge();
+    this.#view.print(this.#getBadgeName());
   }
 }
 export default EventController;
