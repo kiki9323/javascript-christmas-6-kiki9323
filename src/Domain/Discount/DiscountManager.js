@@ -1,4 +1,5 @@
-import { DISCOUNT_TYPES, MINIMUM_DISCOUNT_AMOUNT } from './constants.js';
+import COMMON from '../../constants/common.js';
+import DISCOUNT from './constants.js';
 
 /**
  * Discount 클래스를 활용하여 주문에 적용될 최종 할인을 결정헌다.
@@ -31,27 +32,26 @@ class DiscountManager {
 
   // 주문날짜와 메뉴카테고리 개수 받아서 해당하는 할인 받기
   applyDiscount(orderDate, menuCategory) {
-    // 총주문 금액 10000원 이상부터 이벤트 적용
-    if (this.#totalAmount < MINIMUM_DISCOUNT_AMOUNT) {
+    if (this.#totalAmount < COMMON.unit.eventMin) {
       return (this.#appliedDiscount = this.getDefaultDiscount());
     }
 
     return (this.#appliedDiscount = {
-      [DISCOUNT_TYPES.D_DAY]: this.#discounts.getDdayDiscount(orderDate),
-      [DISCOUNT_TYPES.WEEKDAY]: this.#discounts.getWeeklyDiscount(orderDate, menuCategory, 'weekday'),
-      [DISCOUNT_TYPES.WEEKEND]: this.#discounts.getWeeklyDiscount(orderDate, menuCategory, 'weekend'),
-      [DISCOUNT_TYPES.SPECIAL]: this.#discounts.getSpecialDiscount(orderDate),
-      [DISCOUNT_TYPES.GIFT_EVENT]: this.applyPromotion(),
+      [DISCOUNT.types.dDay]: this.#discounts.getDdayDiscount(orderDate),
+      [DISCOUNT.types.weekday]: this.#discounts.getWeeklyDiscount(orderDate, menuCategory, 'weekday'),
+      [DISCOUNT.types.weekend]: this.#discounts.getWeeklyDiscount(orderDate, menuCategory, 'weekend'),
+      [DISCOUNT.types.special]: this.#discounts.getSpecialDiscount(orderDate),
+      [DISCOUNT.types.giftEvent]: this.applyPromotion(),
     });
   }
 
   getDefaultDiscount() {
     return {
-      [DISCOUNT_TYPES.D_DAY]: 0,
-      [DISCOUNT_TYPES.WEEKDAY]: 0,
-      [DISCOUNT_TYPES.WEEKEND]: 0,
-      [DISCOUNT_TYPES.SPECIAL]: 0,
-      [DISCOUNT_TYPES.GIFT_EVENT]: 0,
+      [DISCOUNT.types.dDay]: 0,
+      [DISCOUNT.types.weekday]: 0,
+      [DISCOUNT.types.weekend]: 0,
+      [DISCOUNT.types.special]: 0,
+      [DISCOUNT.types.giftEvent]: 0,
     };
   }
 
@@ -67,7 +67,7 @@ class DiscountManager {
   // <할인 후 예상 결제 금액> = 총혜택 금액 - 증정 이벤트
   getTotalDiscountWithoutGift() {
     const totalDiscount = Object.entries(this.#appliedDiscount)
-      .filter(([key]) => key !== DISCOUNT_TYPES.GIFT_EVENT)
+      .filter(([key]) => key !== DISCOUNT.types.giftEvent)
       .reduce((sum, [_, discount]) => sum + discount, 0);
 
     return totalDiscount;

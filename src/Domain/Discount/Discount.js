@@ -1,3 +1,4 @@
+import COMMON from '../../constants/common.js';
 /**
  * 할인과 관련된 로직을 처리한다.
  * 할인 조건과 할인 계산과 관련된 데이터 및 메서드를 포함한다.
@@ -11,7 +12,7 @@ class Discount {
   // 크리스마스 할인 계산 로직
   getDdayDiscount(orderDate) {
     const { dates, baseAmount } = this.discounts.christmas;
-    return this.isInDateRange(orderDate, dates) ? baseAmount + (orderDate - 1) * 100 : 0;
+    return this.isInDateRange(orderDate, dates) ? baseAmount + (orderDate - 1) * COMMON.unit.percentage : 0;
   }
 
   // weekly = 평일(weekday) 할인 + 주말(weekend) 할인
