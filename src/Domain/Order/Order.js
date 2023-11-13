@@ -1,7 +1,7 @@
-import { MenuPrices, ORDER } from './constants.js';
-
 import AppError from '../../errors/error.js';
-import ERROR from '../../Lib/constants/error.js';
+import COMMON from '../../constants/common.js';
+import ERROR from '../../constants/error.js';
+import { ORDER } from './constants.js';
 
 class Order {
   #items;
@@ -12,16 +12,16 @@ class Order {
 
   processOrderItems(items) {
     if (this.isOnlyDrinks(items)) {
-      throw new AppError(ERROR.inputView.order.invalidOnlyDrinks);
+      throw new AppError(ERROR.inputView.order.onlyDrinks);
     }
 
     return items.map((item) => this.createSingleOrderData(item));
   }
 
   createSingleOrderData(item) {
-    const [menu, quantity] = item.split('-');
+    const [menu, quantity] = item.split(COMMON.string.dash);
     const category = this.getCategoryOfMenu(menu);
-    const onePrice = MenuPrices[category][menu];
+    const onePrice = ORDER.MenuPrices[category][menu];
     const totalPrice = onePrice * parseInt(quantity);
     return {
       category,
@@ -34,15 +34,15 @@ class Order {
 
   isOnlyDrinks(items) {
     return items.every((item) => {
-      const [menu] = item.split('-');
-      return this.getCategoryOfMenu(menu) === ORDER.drinks;
+      const [menu] = item.split(COMMON.string.dash);
+      return this.getCategoryOfMenu(menu) === ORDER.string.drinks;
     });
   }
 
   getCategoryOfMenu(menu) {
-    const categories = Object.keys(MenuPrices);
+    const categories = Object.keys(ORDER.MenuPrices);
     for (const category of categories) {
-      if (MenuPrices[category].hasOwnProperty(menu)) {
+      if (ORDER.MenuPrices[category].hasOwnProperty(menu)) {
         return category;
       }
     }

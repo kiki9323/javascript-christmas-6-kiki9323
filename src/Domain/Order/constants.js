@@ -1,6 +1,6 @@
 import { deepFreeze } from '../../Lib/utils.js';
 
-export const MenuPrices = deepFreeze({
+const MenuPrices = deepFreeze({
   애피타이저: {
     양송이수프: 6000,
     타파스: 5500,
@@ -23,6 +23,14 @@ export const MenuPrices = deepFreeze({
   },
 });
 
-export const ORDER = Object.freeze({
+const string = Object.freeze({
   drinks: '음료',
+  gift: '샴페인 1개',
 });
+
+export const ORDER = Object.freeze({
+  MenuPrices,
+  string,
+});
+
+export default ORDER;
