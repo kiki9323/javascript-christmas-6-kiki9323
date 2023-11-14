@@ -5,9 +5,6 @@ import ERROR from '../constants/error.js';
 import REGEX from '../constants/regex.js';
 
 const Validator = {
-  /**
-   * 방문 날짜 입력 유효성 검증
-   */
   validatedInputDate(value) {
     if (!this.isValidDate(value)) {
       throw new AppError(ERROR.inputView.date.invalidDate);
@@ -15,6 +12,7 @@ const Validator = {
     return value;
   },
 
+  // 방문 날짜는 1일과 31일 사이
   isValidDate(num) {
     return Number(num) && num >= DATE.period.start && num <= DATE.period.end;
   },
@@ -23,9 +21,6 @@ const Validator = {
     return REGEX.number.test(num);
   },
 
-  /**
-   * 주문 메뉴와 개수 유효성 검증
-   */
   validatedOrder(orderString) {
     const orderItems = this.parseOrder(orderString);
     this.checkOrderItemFormatAndQuantity(orderItems);
