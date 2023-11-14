@@ -17,6 +17,10 @@ const header = {
   eventBadge: '\n<12월 이벤트 배지>',
 };
 
-const MESSAGE = Object.freeze({ read, eventInfo, header });
+const MESSAGE = Object.freeze({
+  read,
+  eventInfo,
+  header,
+});
 
 export default MESSAGE;
