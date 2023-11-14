@@ -6,19 +6,30 @@ import REGEX from '../constants/regex.js';
 
 const Validator = {
   validatedInputDate(value) {
-    if (!this.isValidDate(value)) {
-      throw new AppError(ERROR.inputView.date.invalidDate);
-    }
+    this.isValidDate(value);
+    this.isOnlyNumber(value);
+    this.isExitZero(value);
     return value;
   },
 
   // 방문 날짜는 1일과 31일 사이
   isValidDate(num) {
-    return Number(num) && num >= DATE.period.start && num <= DATE.period.end;
+    const isValidatedDate = Number(num) && num >= DATE.period.start && num <= DATE.period.end;
+    if (!isValidatedDate) {
+      throw new AppError(ERROR.inputView.date.invalidDate);
+    }
   },
 
   isOnlyNumber(num) {
-    return REGEX.number.test(num);
+    const isOnlyNum = REGEX.number.test(num);
+    if (!isOnlyNum) {
+      throw new AppError(ERROR.inputView.date.invalidType);
+    }
+  },
+
+  isExitZero(num) {
+    const exitZero = String(num).startsWith('0');
+    if (exitZero) throw new AppError(ERROR.inputView.date.invalidZero);
   },
 
   validatedOrder(orderString) {

@@ -1,6 +1,7 @@
 const date = Object.freeze({
   invalidDate: '유효하지 않은 날짜입니다. 다시 입력해 주세요.',
-  invalidType: '숫자만 입력해 주세요.',
+  invalidType: '숫자만 입력해 주세요. (공백 혹은 문자가 포함되어 있습니다.)',
+  invalidZero: '숫자 형식을 지켜주세요. (좋은 예시: 1, 안 좋은 예시: 01) 0을 앞자리에 붙이면 안 됩니다.',
 });
 
 const order = Object.freeze({
