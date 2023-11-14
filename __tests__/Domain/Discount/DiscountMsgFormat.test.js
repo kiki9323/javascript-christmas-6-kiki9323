@@ -1,4 +1,3 @@
-import DISCOUNT from '../../../src/Domain/Discount/constants.js';
 import DiscountMsgFormat from '../../../src/Domain/Discount/DiscountMsgFormat.js';
 import { EOL as LINE_SEPARATOR } from 'os';
 import { MissionUtils } from '@woowacourse/mission-utils';
