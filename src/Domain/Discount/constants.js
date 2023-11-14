@@ -35,7 +35,7 @@ const promotion = Object.freeze({
   discountAmount: 25000,
 });
 
-const badges = Object.freeze([
+const badges = deepFreeze([
   { threshold: 0, name: '없음' },
   { threshold: 5000, name: '별' },
   { threshold: 10000, name: '트리' },
