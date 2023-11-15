@@ -17,5 +17,3 @@ export const inputWithRetry = async (inputMethod) => {
     return await inputWithRetry(inputMethod);
   }
 };
-
-export const formatCommas = (prize) => prize.totalLocaleString();
