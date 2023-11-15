@@ -1,9 +1,5 @@
 import DiscountMsgFormat from './DiscountMsgFormat.js';
 import MessageFormat from '../../Lib/MessageFormat.js';
-
-/**
- * 할인 결과를 출력하는 역할을 한다.
- */
 class DiscountView {
   #view;
 
