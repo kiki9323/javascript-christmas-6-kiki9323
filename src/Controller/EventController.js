@@ -1,3 +1,4 @@
+import DISCOUNT from '../Domain/Discount/constants.js';
 import DiscountMsgFormat from '../Domain/Discount/DiscountMsgFormat.js';
 import Order from '../Domain/Order/Order.js';
 import OrderManager from '../Domain/Order/OrderManager.js';
@@ -63,7 +64,7 @@ class EventController {
   #printResults(orderedItems, appliedDiscount) {
     const totalDiscount = this.#discountManager.getTotalDiscount();
     const isGiftEligible = this.#discountManager.applyPromotion();
-    const totalDiscountWithoutGift = this.#discountManager.getTotalDiscountWithoutGift();
+    const totalDiscountWithoutGift = this.#discountManager.getTotalDiscount(DISCOUNT.types.giftEvent);
     const totalPriceBeforeDiscount = this.#orderManager.calculateTotalOrderAmount(orderedItems);
 
     this.#orderView.printOrderResult(orderedItems, totalPriceBeforeDiscount, isGiftEligible);

@@ -54,16 +54,14 @@ class DiscountManager {
     return this.#discounts.applyPromotion(this.#totalAmount);
   }
 
-  getTotalDiscount() {
-    return Object.values(this.#appliedDiscount).reduce((sum, discount) => sum + discount, 0);
-  }
+  getTotalDiscount(filter) {
+    const discounts = Object.entries(this.#appliedDiscount);
 
-  getTotalDiscountWithoutGift() {
-    const totalDiscount = Object.entries(this.#appliedDiscount)
-      .filter(([key]) => key !== DISCOUNT.types.giftEvent)
-      .reduce((sum, [_, discount]) => sum + discount, 0);
+    if (filter) {
+      return discounts.filter(([key]) => key !== filter).reduce((sum, [_, discount]) => sum + discount, 0);
+    }
 
-    return totalDiscount;
+    return discounts.reduce((sum, [_, discount]) => sum + discount, 0);
   }
 }
 

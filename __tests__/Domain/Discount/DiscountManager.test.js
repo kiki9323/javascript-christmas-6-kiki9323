@@ -91,7 +91,7 @@ describe('DiscountManager 클래스', () => {
 
   describe('getTotalDiscountWithoutGift 메서드', () => {
     // when
-    const totalDiscountWithoutGift = discountManager.getTotalDiscountWithoutGift();
+    const totalDiscountWithoutGift = discountManager.getTotalDiscount('증정 이벤트');
 
     // then
     it('증정 이벤트를 제외한 모든 할인 금액을 합쳐야 한다.', () => {
