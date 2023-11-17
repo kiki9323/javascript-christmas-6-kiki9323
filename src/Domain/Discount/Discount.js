@@ -1,4 +1,4 @@
-import COMMON from '../../constants/common.js';
+import COMMON from '../../Constants/common.js';
 
 class Discount {
   constructor(discounts, promotion) {

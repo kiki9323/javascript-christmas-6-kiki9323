@@ -1,6 +1,6 @@
-import AppError from '../../errors/error.js';
-import COMMON from '../../constants/common.js';
-import ERROR from '../../constants/error.js';
+import AppError from '../../Errors/error.js';
+import COMMON from '../../Constants/common.js';
+import ERROR from '../../Constants/error.js';
 import { ORDER } from './constants.js';
 
 class Order {
