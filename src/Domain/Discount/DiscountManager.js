@@ -26,8 +26,12 @@ class DiscountManager {
     }, {});
   }
 
+  isEligibleForDiscount() {
+    return this.#totalAmount >= COMMON.unit.eventMin;
+  }
+
   applyDiscount(orderDate, menuCategory) {
-    if (this.#totalAmount < COMMON.unit.eventMin) {
+    if (!this.isEligibleForDiscount()) {
       return (this.#appliedDiscount = this.getDefaultDiscount());
     }
 
